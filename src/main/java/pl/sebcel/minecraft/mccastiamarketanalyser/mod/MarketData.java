@@ -26,7 +26,7 @@ public class MarketData implements IShopOfferFoundListener, IShopInfoFoundListen
                         String superOffers = "";
 
                         for (String productName : offers.keySet()) {
-                            File outputFile = new File("market" + File.separator + "prices-" + productName + ".csv");
+                            File outputFile = new File("market" + File.separator + productName + ".csv");
                             outputFile.getParentFile().mkdirs();
                             FileWriter fw = new FileWriter(outputFile, false);
 
@@ -42,13 +42,13 @@ public class MarketData implements IShopOfferFoundListener, IShopInfoFoundListen
                                 }
 
                                 if (offerInfo.getItemBuyPrice() != null) {
-                                    if (bestBuyOffer == null || bestBuyOffer.getItemBuyPrice() < offerInfo.getItemBuyPrice()) {
+                                    if (bestBuyOffer == null || bestBuyOffer.getItemBuyPrice() > offerInfo.getItemBuyPrice()) {
                                         bestBuyOffer = offerInfo;
                                     }
                                 }
 
                                 if (offerInfo.getItemSellPrice() != null) {
-                                    if (bestSellOffer == null || bestSellOffer.getItemSellPrice() > offerInfo.getItemSellPrice()) {
+                                    if (bestSellOffer == null || bestSellOffer.getItemSellPrice() < offerInfo.getItemSellPrice()) {
                                         bestSellOffer = offerInfo;
                                     }
                                 }

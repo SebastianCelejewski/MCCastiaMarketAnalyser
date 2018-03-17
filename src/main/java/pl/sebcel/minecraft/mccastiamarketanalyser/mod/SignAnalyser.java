@@ -60,7 +60,7 @@ public class SignAnalyser implements ISignFoundListener {
             int stockSize = Integer.parseInt(lines[1]);
             String rawOfferText = lines[2];
             String productName = lines[3];
-            productName.replaceAll(":", "_");
+            productName = productName.replaceAll("\\:", "_");
 
             shopOffer.setOwnerName(shopOwnerName);
             shopOffer.setProductName(productName);
