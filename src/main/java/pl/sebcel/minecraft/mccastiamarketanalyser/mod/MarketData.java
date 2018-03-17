@@ -5,11 +5,13 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopInfoFoundListener;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopOfferFoundListener;
 
-public class MarketData implements IShopOfferFoundListener {
+public class MarketData implements IShopOfferFoundListener, IShopInfoFoundListener {
 
-    private Map<String, String> offers = new HashMap<>();
+    private Map<String, Map<String, String>> offers = new HashMap<>();
+    private Map<String, Integer> shops = new HashMap<>();
 
     public MarketData() {
         Thread marketSaveThread = new Thread(new Runnable() {
@@ -18,14 +20,27 @@ public class MarketData implements IShopOfferFoundListener {
             public void run() {
                 while (true) {
                     try {
-                        File outputFile = new File("market" + File.separator + "prices.csv");
+                        for (String productName : offers.keySet()) {
+                            File outputFile = new File("market" + File.separator + "prices-" + productName + ".csv");
+                            outputFile.getParentFile().mkdirs();
+                            FileWriter fw = new FileWriter(outputFile, false);
+                            for (String shopOwner : offers.get(productName).keySet()) {
+                                String offer = offers.get(productName).get(shopOwner);
+                                fw.write(shopOwner + "," + offer + "\n");
+                            }
+
+                            fw.close();
+                        }
+
+                        File outputFile = new File("market" + File.separator + "shops.csv");
                         outputFile.getParentFile().mkdirs();
                         FileWriter fw = new FileWriter(outputFile, false);
-                        for (Map.Entry<String, String> entry : offers.entrySet()) {
-                            fw.write(entry.getKey() + "    " + entry.getValue() + "\n");
+                        for (Map.Entry<String, Integer> entry : shops.entrySet()) {
+                            fw.write(entry.getValue() + "," + entry.getKey() + "\n");
                         }
 
                         fw.close();
+
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -43,9 +58,19 @@ public class MarketData implements IShopOfferFoundListener {
 
     @Override
     public void onShopOfferFound(ShopOffer shopOffer) {
-        String offerKey = shopOffer.getOwnerName() + "-" + shopOffer.getProductName() + "-" + shopOffer.getStockSize();
-        String offerValue = shopOffer.getOffer();
-        offers.put(offerKey, offerValue);
-        System.out.println(offerKey + ": " + offerValue);
+        String productName = shopOffer.getProductName();
+        if (!offers.containsKey(productName)) {
+            offers.put(productName, new HashMap<>());
+        }
+        Map<String, String> pricesForProduct = offers.get(productName);
+
+        String ownerName = shopOffer.getOwnerName();
+        String offerValue = shopOffer.getStockSize() + "/" + shopOffer.getRawOfferString();
+        pricesForProduct.put(ownerName, offerValue);
+    }
+
+    @Override
+    public void onShopInfoFound(ShopInfo shopInfo) {
+        shops.put(shopInfo.getOwnerName(), shopInfo.getShopId());
     }
 }

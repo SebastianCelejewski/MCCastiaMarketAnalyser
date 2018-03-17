@@ -5,15 +5,21 @@ import java.util.Set;
 
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.text.ITextComponent;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopInfoFoundListener;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopOfferFoundListener;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ISignFoundListener;
 
 public class SignAnalyser implements ISignFoundListener {
 
     private Set<IShopOfferFoundListener> shopOfferFoundListeners = new HashSet<>();
+    private Set<IShopInfoFoundListener> shopInfoFoundListeners = new HashSet<>();
 
     public void addShopOfferFoundListener(IShopOfferFoundListener shopOfferFoundListener) {
         this.shopOfferFoundListeners.add(shopOfferFoundListener);
+    }
+
+    public void addShopInfoFoundListener(IShopInfoFoundListener shopInfoFoundListener) {
+        this.shopInfoFoundListeners.add(shopInfoFoundListener);
     }
 
     public void onSignFound(TileEntitySign sign) {
@@ -23,13 +29,33 @@ public class SignAnalyser implements ISignFoundListener {
             lines[i] = signText[i].getUnformattedText();
         }
 
-        ShopOffer shopOffer = new ShopOffer();
+        try {
+            ShopOffer shopOffer = parseShopOffer(lines);
+            if (shopOffer != null) {
+                for (IShopOfferFoundListener listener : shopOfferFoundListeners) {
+                    listener.onShopOfferFound(shopOffer);
+                }
+            }
+
+            ShopInfo shopInfo = parseShopInfo(lines);
+            if (shopInfo != null) {
+                for (IShopInfoFoundListener listener : shopInfoFoundListeners) {
+                    listener.onShopInfoFound(shopInfo);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public ShopOffer parseShopOffer(String[] lines) {
+        if (!containsFourNonEmptyStrings(lines)) {
+            return null;
+        }
 
         try {
-            // Ron21,64,B1050,Coal Ore
-            for (int i = 0; i < lines.length; i++) {
-                System.out.println("Line " + i + ": " + lines[i]);
-            }
+            ShopOffer shopOffer = new ShopOffer();
+
             String shopOwnerName = lines[0];
             int stockSize = Integer.parseInt(lines[1]);
             String offer = lines[2];
@@ -37,14 +63,56 @@ public class SignAnalyser implements ISignFoundListener {
 
             shopOffer.setOwnerName(shopOwnerName);
             shopOffer.setProductName(productName);
-            shopOffer.setOffer(offer);
+            shopOffer.setRawOfferString(offer);
             shopOffer.setStockSize(stockSize);
 
-            for (IShopOfferFoundListener listener : shopOfferFoundListeners) {
-                listener.onShopOfferFound(shopOffer);
-            }
+            return shopOffer;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            return null;
         }
+    }
+
+    // [Rented],shop3,JuumpyMC,01-04 21:35
+    public ShopInfo parseShopInfo(String[] lines) {
+        if (!containsFourNonEmptyStrings(lines)) {
+            return null;
+        }
+
+        if (!lines[0].equals("[Rented]")) {
+            return null;
+        }
+
+        if (!lines[1].startsWith("shop")) {
+            return null;
+        }
+
+        try {
+            String shopName = lines[1];
+            String ownerName = lines[2];
+            int shopId = Integer.parseInt(shopName.substring(4));
+            return new ShopInfo(shopId, ownerName);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private boolean containsFourNonEmptyStrings(String[] lines) {
+        if (lines.length != 4) {
+            return false;
+        }
+        if (lines[0].trim().length() == 0) {
+            return false;
+        }
+        if (lines[1].trim().length() == 0) {
+            return false;
+        }
+        if (lines[2].trim().length() == 0) {
+            return false;
+        }
+        if (lines[3].trim().length() == 0) {
+            return false;
+        }
+
+        return true;
     }
 }

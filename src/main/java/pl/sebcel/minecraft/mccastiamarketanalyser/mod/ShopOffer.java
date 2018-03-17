@@ -4,7 +4,7 @@ public class ShopOffer {
 
     private String ownerName;
     private String productName;
-    private String offer;
+    private String rawOfferString;
     private int stockSize;
 
     public String getOwnerName() {
@@ -23,14 +23,6 @@ public class ShopOffer {
         this.productName = productName;
     }
 
-    public String getOffer() {
-        return offer;
-    }
-
-    public void setOffer(String offer) {
-        this.offer = offer;
-    }
-
     public int getStockSize() {
         return stockSize;
     }
@@ -39,4 +31,13 @@ public class ShopOffer {
         this.stockSize = stockSize;
     }
 
+    public String getRawOfferString() {
+        return rawOfferString;
+    }
+
+    public void setRawOfferString(String rawOfferString) {
+        this.rawOfferString = rawOfferString;
+    }
+
+    
 }

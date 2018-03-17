@@ -28,11 +28,14 @@ public class CastiaMarketAnalyserMod {
         signAnalyser = new SignAnalyser();
         rawSignTextLogger = new RawSignTextLogger();
         marketData = new MarketData();
+        
+        rawSignTextLogger.initialize();
 
         playerMoveHandler.addSignFoundListener(rawSignTextLogger);
         playerMoveHandler.addSignFoundListener(signAnalyser);
         rawSignTextLogger.setOutputDirectoryName("signs");
         signAnalyser.addShopOfferFoundListener(marketData);
+        signAnalyser.addShopInfoFoundListener(marketData);
 
         MinecraftForge.EVENT_BUS.register(playerMoveHandler);
     }
