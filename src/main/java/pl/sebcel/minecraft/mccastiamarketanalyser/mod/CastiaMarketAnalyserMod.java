@@ -13,9 +13,10 @@ public class CastiaMarketAnalyserMod implements ISignFoundListener {
     public static final String MODID = "castiamarketanalyser";
     public static final String NAME = "CastiaMC Market Analyser";
     public static final String VERSION = "1.0";
-    
+
     private PlayerMoveHandler playerMoveHandler;
     private SignAnalyser signAnalyser;
+    private RawSignTextLogger rawSignTextLogger;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -25,13 +26,16 @@ public class CastiaMarketAnalyserMod implements ISignFoundListener {
     public void init(FMLInitializationEvent event) {
         playerMoveHandler = new PlayerMoveHandler();
         signAnalyser = new SignAnalyser();
+        rawSignTextLogger = new RawSignTextLogger();
+
         playerMoveHandler.setSignFoundListener(this);
-        
+        rawSignTextLogger.setOutputDirectoryName("signs");
+
         MinecraftForge.EVENT_BUS.register(playerMoveHandler);
     }
-    
+
     public void onSignFound(TileEntitySign sign) {
         signAnalyser.analyseSign(sign);
+        rawSignTextLogger.saveSign(sign);
     }
-
 }
