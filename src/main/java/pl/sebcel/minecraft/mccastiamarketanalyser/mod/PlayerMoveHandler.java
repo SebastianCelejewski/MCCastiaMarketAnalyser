@@ -46,7 +46,7 @@ public class PlayerMoveHandler {
     private void readSigns(Entity player) {
         BlockPos playerPosition = player.getPosition();
         for (int x = playerPosition.getX() - 5; x <= playerPosition.getX() + 5; x++) {
-            for (int y = playerPosition.getY() - 2; y <= playerPosition.getY() + 2; y++) {
+            for (int y = playerPosition.getY() - 5; y <= playerPosition.getY() + 5; y++) {
                 for (int z = playerPosition.getZ() - 5; z <= playerPosition.getZ() + 5; z++) {
                     TileEntity tileEntity = player.getEntityWorld().getTileEntity(new BlockPos(x, y, z));
                     if (tileEntity instanceof TileEntitySign) {

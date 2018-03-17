@@ -58,21 +58,23 @@ public class SignAnalyser implements ISignFoundListener {
 
             String shopOwnerName = lines[0];
             int stockSize = Integer.parseInt(lines[1]);
-            String offer = lines[2];
+            String rawOfferText = lines[2];
             String productName = lines[3];
+            productName.replaceAll(":", "_");
 
             shopOffer.setOwnerName(shopOwnerName);
             shopOffer.setProductName(productName);
-            shopOffer.setRawOfferString(offer);
+            shopOffer.setRawOfferString(rawOfferText);
             shopOffer.setStockSize(stockSize);
-
+            shopOffer.setStockBuyPrice(parseStockBuyPrice(rawOfferText));
+            shopOffer.setStockSellPrice(parseStockSellPrice(rawOfferText));
+            
             return shopOffer;
         } catch (Exception ex) {
             return null;
         }
     }
 
-    // [Rented],shop3,JuumpyMC,01-04 21:35
     public ShopInfo parseShopInfo(String[] lines) {
         if (!containsFourNonEmptyStrings(lines)) {
             return null;
@@ -94,6 +96,47 @@ public class SignAnalyser implements ISignFoundListener {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    public Integer parseStockBuyPrice(String rawOfferText) {
+        if (rawOfferText == null) {
+            return null;
+        }
+        if (rawOfferText.trim().length() == 0) {
+            return null;
+        }
+        String[] tokens = rawOfferText.split(":");
+        for (int i = 0; i < tokens.length; i++) {
+            if (tokens[i].contains("B")) {
+                try {
+                    return Integer.parseInt(tokens[i].replaceAll("B", "").trim());
+                } catch (NumberFormatException ex) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Integer parseStockSellPrice(String rawOfferText) {
+        if (rawOfferText == null) {
+            return null;
+        }
+        if (rawOfferText.trim().length() == 0) {
+            return null;
+        }
+        String[] tokens = rawOfferText.split(":");
+        for (int i = 0; i < tokens.length; i++) {
+            if (tokens[i].contains("S")) {
+                try {
+                    int sellPrice = Integer.parseInt(tokens[i].replaceAll("S", "").trim());
+                    return sellPrice;
+                } catch (NumberFormatException ex) {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 
     private boolean containsFourNonEmptyStrings(String[] lines) {

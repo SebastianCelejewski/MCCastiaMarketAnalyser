@@ -6,6 +6,8 @@ public class ShopOffer {
     private String productName;
     private String rawOfferString;
     private int stockSize;
+    private Integer stockBuyPrice;
+    private Integer stockSellPrice;
 
     public String getOwnerName() {
         return ownerName;
@@ -39,5 +41,35 @@ public class ShopOffer {
         this.rawOfferString = rawOfferString;
     }
 
+    public Integer getStockBuyPrice() {
+        return stockBuyPrice;
+    }
+
+    public void setStockBuyPrice(Integer stockBuyPrice) {
+        this.stockBuyPrice = stockBuyPrice;
+    }
+
+    public Integer getStockSellPrice() {
+        return stockSellPrice;
+    }
+
+    public void setStockSellPrice(Integer stockSellPrice) {
+        this.stockSellPrice = stockSellPrice;
+    }
     
+    public Double getItemSellPrice() {
+        if (stockSellPrice != null) {
+            return stockSellPrice.doubleValue() / stockSize;
+        } else {
+            return null;
+        }
+    }
+    
+    public Double getItemBuyPrice() {
+        if (stockBuyPrice != null) {
+            return stockBuyPrice.doubleValue() / stockSize;
+        } else {
+            return null;
+        }
+    }
 }
