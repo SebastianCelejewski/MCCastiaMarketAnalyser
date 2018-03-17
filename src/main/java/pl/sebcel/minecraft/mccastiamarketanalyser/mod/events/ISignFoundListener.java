@@ -1,4 +1,4 @@
-package pl.sebcel.minecraft.mccastiamarketanalyser.mod;
+package pl.sebcel.minecraft.mccastiamarketanalyser.mod.events;
 
 import net.minecraft.tileentity.TileEntitySign;
 

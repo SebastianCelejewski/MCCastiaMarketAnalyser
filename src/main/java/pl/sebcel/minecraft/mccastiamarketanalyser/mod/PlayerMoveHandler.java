@@ -1,5 +1,8 @@
 package pl.sebcel.minecraft.mccastiamarketanalyser.mod;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -9,13 +12,14 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.EntityEvent.EnteringChunk;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ISignFoundListener;
 
 public class PlayerMoveHandler {
 
-    private ISignFoundListener signFoundListener;
+    private Set<ISignFoundListener> signFoundListeners = new HashSet<>();
 
-    public void setSignFoundListener(ISignFoundListener signFoundListener) {
-        this.signFoundListener = signFoundListener;
+    public void addSignFoundListener(ISignFoundListener signFoundListener) {
+        this.signFoundListeners.add(signFoundListener);
     }
 
     @SubscribeEvent
@@ -46,8 +50,8 @@ public class PlayerMoveHandler {
                 for (int z = playerPosition.getZ() - 5; z <= playerPosition.getZ() + 5; z++) {
                     TileEntity tileEntity = player.getEntityWorld().getTileEntity(new BlockPos(x, y, z));
                     if (tileEntity instanceof TileEntitySign) {
-                        if (signFoundListener != null) {
-                            signFoundListener.onSignFound((TileEntitySign) tileEntity);
+                        for (ISignFoundListener listener : signFoundListeners) {
+                            listener.onSignFound((TileEntitySign) tileEntity);
                         }
                     }
                 }
