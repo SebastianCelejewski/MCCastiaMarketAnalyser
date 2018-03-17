@@ -1,0 +1,16 @@
+[
+{
+  "modid": "castiamarketanalyser",
+  "name": "CastiaMC Market Analyser",
+  "description": "Forge-based plugin that reads signs in CastiaMC market and extracts price information.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Sebastian Celejewski"],
+  "credits": "The Forge and FML guys, for making this example",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
