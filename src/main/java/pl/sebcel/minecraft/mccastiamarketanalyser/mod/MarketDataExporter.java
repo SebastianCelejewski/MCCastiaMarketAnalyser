@@ -20,7 +20,7 @@ import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopInfoFoundListe
 
 public class MarketDataExporter implements IShopInfoFoundListener, ILoadDataCommandListener, ISaveDataCommandListener {
 
-    private final static String SHOP_INFO_FILE_NAME = "market" + File.separator + "shopInfo.dta";
+    private final static String SHOP_INFO_FILE_NAME = CastiaMarketAnalyserMod.PLUGIN_DIRECTORY_NAME + File.separator + "shopInfo.dta";
 
     private Map<String, String> shopInfos = new HashMap<>();
 
@@ -47,6 +47,45 @@ public class MarketDataExporter implements IShopInfoFoundListener, ILoadDataComm
             ex.printStackTrace();
         }
     }
+    
+    @Override
+    public void onShopInfoFound(ShopInfo shopInfo) {
+        shopInfos.put(shopInfo.getOwnerName(), "Shop" + Integer.toString(shopInfo.getShopId()));
+    }
+        
+    @Override
+    public void onDataSaveRequested(ICommandSender sender) {
+        try {
+            File outputFile = new File(SHOP_INFO_FILE_NAME);
+            outputFile.getParentFile().mkdirs();
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(outputFile));
+            out.writeObject(shopInfos);
+            out.close();
+            System.out.println("Successfully saved shop info for " + shopInfos.size() + " shops");
+        } catch (Exception ex) {
+            System.err.println("Failed to save shop info: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onDataLoadRequested(ICommandSender sender) {
+        try {
+            File inputFile = new File(SHOP_INFO_FILE_NAME);
+            if (inputFile.exists()) {
+                ObjectInputStream in = new ObjectInputStream(new FileInputStream(inputFile));
+                shopInfos = (Map<String, String>) in.readObject();
+                in.close();
+                System.out.println("Successfully loaded shop info for " + shopInfos.size() + " shops");
+            } else {
+                System.out.println("Not loaded shop infos - data file not found");
+            }
+        } catch (Exception ex) {
+            System.err.println("Failed to load shop info: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }    
 
     private void writeBuyOffer(Writer out, ShopOffer offer) {
         try {
@@ -63,50 +102,12 @@ public class MarketDataExporter implements IShopInfoFoundListener, ILoadDataComm
             // intentional - nothing to do here
         }
     }
-
-    @Override
-    public void onShopInfoFound(ShopInfo shopInfo) {
-        shopInfos.put(shopInfo.getOwnerName(), "Shop" + Integer.toString(shopInfo.getShopId()));
-    }
-
+   
     private String getShopIdForOwnerName(String ownerName) {
         if (shopInfos.containsKey(ownerName)) {
             return shopInfos.get(ownerName);
         } else {
             return "";
-        }
-    }
-
-    @Override
-    public void onDataSaveRequested(ICommandSender sender) {
-        try {
-            File outputFile = new File(SHOP_INFO_FILE_NAME);
-            outputFile.getParentFile().mkdirs();
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(outputFile));
-            out.writeObject(shopInfos);
-            out.close();
-            System.out.println("Successfully saved shop info for " + shopInfos.size() + " shops");
-        } catch (Exception ex) {
-            System.err.println("Failed to save shop info: " + ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onDataLoadRequested(ICommandSender sender) {
-        try {
-            File inputFile = new File(SHOP_INFO_FILE_NAME);
-            if (inputFile.exists()) {
-                ObjectInputStream in = new ObjectInputStream(new FileInputStream(inputFile));
-                shopInfos = (Map<String, String>) in.readObject();
-                in.close();
-                System.out.println("Successfully loaded shop info for " + shopInfos.size() + " shops");
-            } else {
-                System.out.println("Not loaded shop infos - data file not found");
-            }
-        } catch (Exception ex) {
-            System.err.println("Failed to load shop info: " + ex.getMessage());
-            ex.printStackTrace();
         }
     }
 }

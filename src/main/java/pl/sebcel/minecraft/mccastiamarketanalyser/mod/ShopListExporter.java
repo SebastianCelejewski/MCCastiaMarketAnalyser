@@ -21,7 +21,7 @@ public class ShopListExporter implements IShopInfoFoundListener {
 
     private void exportShopInfo() {
         try {
-            File outputFile = new File("market" + File.separator + "_shops.csv");
+            File outputFile = new File(CastiaMarketAnalyserMod.PLUGIN_DIRECTORY_NAME + File.separator + "_shops.csv");
             outputFile.getParentFile().mkdirs();
             FileWriter fw = new FileWriter(outputFile, false);
             fw.write(shops.entrySet().stream().map(x -> x.getKey() + "," + x.getValue()).collect(Collectors.joining("\n")));

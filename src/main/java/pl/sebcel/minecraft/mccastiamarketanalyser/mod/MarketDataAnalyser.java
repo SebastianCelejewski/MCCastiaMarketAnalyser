@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.ICommandSender;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.MarketData;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopOffer;
@@ -25,8 +24,8 @@ import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopOfferFoundList
 
 public class MarketDataAnalyser implements IShopOfferFoundListener, ILoadDataCommandListener, ISaveDataCommandListener {
 
-    private final static String PRODUCT_NAMES_FILE_NAME = "market" + File.separator + "products.dta";
-    private final static String OFFERS_FILE_NAME = "market" + File.separator + "offers.dta";
+    private final static String PRODUCT_NAMES_FILE_NAME = CastiaMarketAnalyserMod.PLUGIN_DIRECTORY_NAME + File.separator + "products.dta";
+    private final static String OFFERS_FILE_NAME = CastiaMarketAnalyserMod.PLUGIN_DIRECTORY_NAME + File.separator + "offers.dta";
 
     private Set<String> productNames = new HashSet<>();
     private Map<String, Map<String, ShopOffer>> offers = new HashMap<>();
@@ -51,18 +50,21 @@ public class MarketDataAnalyser implements IShopOfferFoundListener, ILoadDataCom
         List<MarketData> result = new ArrayList<>();
 
         for (String productName : productNames) {
-
-            List<ShopOffer> buyOffers = offers.getOrDefault(productName, new HashMap<String, ShopOffer>()).values().stream().filter(isBuyOffer).sorted(buyPriceAscending).collect(Collectors.toList());
-
-            List<ShopOffer> sellOffers = offers.getOrDefault(productName, new HashMap<String, ShopOffer>()).values().stream().filter(isSellOffer).sorted(sellPriceDescending).collect(Collectors.toList());
-
-            System.out.println("Found " + buyOffers.size() + " buy offers and " + sellOffers.size() + " sell offers for " + productName);
-            if (offers.containsKey(productName)) {
-                System.out.println("All offers for " + productName + ": " + offers.get(productName).size());
-            }
-
+            List<ShopOffer> buyOffers = offers
+                    .getOrDefault(productName, new HashMap<String, ShopOffer>())
+                    .values()
+                    .stream()
+                    .filter(isBuyOffer)
+                    .sorted(buyPriceAscending)
+                    .collect(Collectors.toList());
+            List<ShopOffer> sellOffers = offers
+                    .getOrDefault(productName, new HashMap<String, ShopOffer>())
+                    .values()
+                    .stream()
+                    .filter(isSellOffer)
+                    .sorted(sellPriceDescending)
+                    .collect(Collectors.toList());
             boolean tradeOpportunity = buyOffers.size() > 0 && sellOffers.size() > 0 && buyOffers.get(0).getItemBuyPrice() < sellOffers.get(0).getItemSellPrice();
-
             result.add(new MarketData(productName, buyOffers, sellOffers, tradeOpportunity));
         }
 
@@ -91,6 +93,7 @@ public class MarketDataAnalyser implements IShopOfferFoundListener, ILoadDataCom
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onDataLoadRequested(ICommandSender sender) {
         try {
