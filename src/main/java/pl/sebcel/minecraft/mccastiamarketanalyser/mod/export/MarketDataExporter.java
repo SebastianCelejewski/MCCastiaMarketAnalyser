@@ -22,17 +22,18 @@ import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopInfoFoundListe
 public class MarketDataExporter implements IShopInfoFoundListener, ILoadDataCommandListener, ISaveDataCommandListener {
 
     private final static String SHOP_INFO_FILE_NAME = CastiaMarketAnalyserMod.PLUGIN_DIRECTORY_NAME + File.separator + "shopInfo.dta";
+    private final static String PRODUCT_PRICES_FILE_NAME_PREFIX = CastiaMarketAnalyserMod.PLUGIN_DIRECTORY_NAME + File.separator + "%s_%s.csv";
 
     private Map<String, String> shopInfos = new HashMap<>();
 
     public void exportMarketData(MarketData marketData) {
         try {
-            String shortFileName = marketData.getProductName() + ".csv";
+            String opportunitySymbol = "";
             if (marketData.isTradeOpportunity()) {
-                shortFileName = "_" + shortFileName;
+                opportunitySymbol = "_";
             }
 
-            File outputFile = new File("market" + File.separator + shortFileName);
+            File outputFile = new File(String.format(PRODUCT_PRICES_FILE_NAME_PREFIX, opportunitySymbol, marketData.getProductName()));
             outputFile.getParentFile().mkdirs();
             FileWriter fw = new FileWriter(outputFile);
 

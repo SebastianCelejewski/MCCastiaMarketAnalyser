@@ -16,6 +16,8 @@ import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ISignFoundListener;
 
 public class PlayerMoveHandler {
 
+    private final static int SIGN_READING_RANGE_IN_BLOCKS = 5;
+
     private Set<ISignFoundListener> signFoundListeners = new HashSet<>();
 
     public void addSignFoundListener(ISignFoundListener signFoundListener) {
@@ -45,9 +47,9 @@ public class PlayerMoveHandler {
 
     private void readSigns(Entity player) {
         BlockPos playerPosition = player.getPosition();
-        for (int x = playerPosition.getX() - 5; x <= playerPosition.getX() + 5; x++) {
-            for (int y = playerPosition.getY() - 5; y <= playerPosition.getY() + 5; y++) {
-                for (int z = playerPosition.getZ() - 5; z <= playerPosition.getZ() + 5; z++) {
+        for (int x = playerPosition.getX() - SIGN_READING_RANGE_IN_BLOCKS; x <= playerPosition.getX() + SIGN_READING_RANGE_IN_BLOCKS; x++) {
+            for (int y = playerPosition.getY() - SIGN_READING_RANGE_IN_BLOCKS; y <= playerPosition.getY() + SIGN_READING_RANGE_IN_BLOCKS; y++) {
+                for (int z = playerPosition.getZ() - SIGN_READING_RANGE_IN_BLOCKS; z <= playerPosition.getZ() + SIGN_READING_RANGE_IN_BLOCKS; z++) {
                     TileEntity tileEntity = player.getEntityWorld().getTileEntity(new BlockPos(x, y, z));
                     if (tileEntity instanceof TileEntitySign) {
                         for (ISignFoundListener listener : signFoundListeners) {
@@ -59,6 +61,9 @@ public class PlayerMoveHandler {
         }
     }
 
+    // Player position is a real number internally, but integer in the API. As a result player's position
+    // returned by API changes even if player stays still. For example, when x = 13.5, API returns x = 13,
+    // then x = 14, then x = 13, etc.
     private boolean playerMoved(Vec3d previousPosition, Vec3d currentPosition) {
         if (previousPosition == null) {
             return true;

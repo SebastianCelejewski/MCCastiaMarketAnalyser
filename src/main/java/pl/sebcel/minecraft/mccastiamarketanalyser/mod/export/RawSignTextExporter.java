@@ -4,22 +4,18 @@ import java.io.File;
 import java.io.FileWriter;
 
 import net.minecraft.tileentity.TileEntitySign;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.CastiaMarketAnalyserMod;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ISignFoundListener;
 
 public class RawSignTextExporter implements ISignFoundListener {
 
-    private String outputDirectoryName = "signs";
-    private String outputFileName = "signs.txt";
+    private final static String SIGNS_CONTENT_FILE_NAME = CastiaMarketAnalyserMod.PLUGIN_DIRECTORY_NAME + File.separator + "__signs.log";
+
     private FileWriter fw;
 
-    public void setOutputDirectoryName(String outputDirectoryName) {
-        this.outputDirectoryName = outputDirectoryName;
-    }
-
     public void initialize() {
-        File outputFolder = new File(outputDirectoryName);
-        File outputFile = new File(outputDirectoryName + File.separator + outputFileName);
-        outputFolder.mkdirs();
+        File outputFile = new File(SIGNS_CONTENT_FILE_NAME);
+        outputFile.getParentFile().mkdirs();
         try {
             fw = new FileWriter(outputFile, true);
         } catch (Exception ex) {
@@ -46,7 +42,7 @@ public class RawSignTextExporter implements ISignFoundListener {
                 fw.flush();
             }
         } catch (Exception ex) {
-            System.err.println("Failed to save sing text to " + outputDirectoryName + File.separator + outputFileName + ": " + ex.getMessage());
+            System.err.println("Failed to save sing text to " + SIGNS_CONTENT_FILE_NAME + ": " + ex.getMessage());
         }
     }
 }

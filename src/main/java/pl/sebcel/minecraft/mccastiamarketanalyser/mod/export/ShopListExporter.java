@@ -12,6 +12,8 @@ import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopInfoFoundListe
 
 public class ShopListExporter implements IShopInfoFoundListener {
 
+    private final static String SHOP_LIST_FILE_NAME = CastiaMarketAnalyserMod.PLUGIN_DIRECTORY_NAME + File.separator + "__shops.csv";
+
     private Map<Integer, String> shops = new HashMap<>();
 
     @Override
@@ -22,7 +24,7 @@ public class ShopListExporter implements IShopInfoFoundListener {
 
     private void exportShopInfo() {
         try {
-            File outputFile = new File(CastiaMarketAnalyserMod.PLUGIN_DIRECTORY_NAME + File.separator + "_shops.csv");
+            File outputFile = new File(SHOP_LIST_FILE_NAME);
             outputFile.getParentFile().mkdirs();
             FileWriter fw = new FileWriter(outputFile, false);
             fw.write(shops.entrySet().stream().map(x -> x.getKey() + "," + x.getValue()).collect(Collectors.joining("\n")));

@@ -7,7 +7,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.AnalyseMarketCommand;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.LoadDataCommand;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.SaveDataCommand;
@@ -23,50 +22,32 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
     public static final String MODID = "castiamarketanalyser";
     public static final String NAME = "CastiaMC Market Analyser";
     public static final String VERSION = "1.0";
-    
+
     public static final String PLUGIN_DIRECTORY_NAME = "market";
 
-    private PlayerMoveHandler playerMoveHandler;
-    private SignAnalyser signAnalyser;
-    private RawSignTextExporter rawSignTextLogger;
-    private MarketDataAnalyser marketDataAnalyser;
-    private ShopListExporter shopListExporter;
-    private MarketDataExporter marketDataExporter;
-    
-    private AnalyseMarketCommand analyseMarketCommand;
-    private LoadDataCommand loadDataCommand;
-    private SaveDataCommand saveDataCommand;
+    private PlayerMoveHandler playerMoveHandler = new PlayerMoveHandler();
+    private SignAnalyser signAnalyser = new SignAnalyser();
+    private RawSignTextExporter rawSignTextLogger = new RawSignTextExporter();
+    private MarketDataAnalyser marketDataAnalyser = new MarketDataAnalyser();
+    private ShopListExporter shopListExporter = new ShopListExporter();
+    private MarketDataExporter marketDataExporter = new MarketDataExporter();
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        System.out.println("FMLPreInitializationEvent");
-    }
+    private AnalyseMarketCommand analyseMarketCommand = new AnalyseMarketCommand();
+    private LoadDataCommand loadDataCommand = new LoadDataCommand();
+    private SaveDataCommand saveDataCommand = new SaveDataCommand();
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        System.out.println("FMLInitializationEvent");
-        playerMoveHandler = new PlayerMoveHandler();
-        signAnalyser = new SignAnalyser();
-        rawSignTextLogger = new RawSignTextExporter();
-        marketDataAnalyser = new MarketDataAnalyser();
-        shopListExporter = new ShopListExporter();
-        marketDataExporter = new MarketDataExporter();
-
-        analyseMarketCommand = new AnalyseMarketCommand();
-        loadDataCommand = new LoadDataCommand();
-        saveDataCommand = new SaveDataCommand();
+        System.out.println("Initializing CastiaMarketAnalyser mod");
 
         rawSignTextLogger.initialize();
-        
+
         loadDataCommand.addCommandListener(marketDataAnalyser);
         loadDataCommand.addCommandListener(marketDataExporter);
-        
         saveDataCommand.addCommandListener(marketDataAnalyser);
         saveDataCommand.addCommandListener(marketDataExporter);
-
-//        playerMoveHandler.addSignFoundListener(rawSignTextLogger);
+        playerMoveHandler.addSignFoundListener(rawSignTextLogger);
         playerMoveHandler.addSignFoundListener(signAnalyser);
-        rawSignTextLogger.setOutputDirectoryName("signs");
         signAnalyser.addShopOfferFoundListener(marketDataAnalyser);
         signAnalyser.addShopInfoFoundListener(shopListExporter);
         analyseMarketCommand.addCommandListener(this);
@@ -82,8 +63,10 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
     public void onAnalyseMarketCommand() {
         System.out.println("Analysing market data");
         List<MarketData> marketData = marketDataAnalyser.analyseMarketData();
+        
         System.out.println("Market data analysed for " + marketData.size() + " products. Exporting");
         marketData.stream().forEach(x -> marketDataExporter.exportMarketData(x));
+        
         System.out.println("Export completed");
     }
 }

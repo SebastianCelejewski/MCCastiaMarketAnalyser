@@ -26,6 +26,7 @@ public class SignAnalyser implements ISignFoundListener {
     }
 
     public void onSignFound(TileEntitySign sign) {
+        // TODO: Lines below could be turned into a fancy lambda
         ITextComponent[] signText = ((TileEntitySign) sign).signText;
         String[] lines = new String[signText.length];
         for (int i = 0; i < signText.length; i++) {
@@ -63,7 +64,7 @@ public class SignAnalyser implements ISignFoundListener {
             int stockSize = Integer.parseInt(lines[1]);
             String rawOfferText = lines[2];
             String productName = lines[3];
-            productName = productName.replaceAll("\\:", "_");
+            productName = productName.replaceAll("\\:", "_");  // TODO: move it to exporter, analyser should not care about this
 
             shopOffer.setOwnerName(shopOwnerName);
             shopOffer.setProductName(productName);
