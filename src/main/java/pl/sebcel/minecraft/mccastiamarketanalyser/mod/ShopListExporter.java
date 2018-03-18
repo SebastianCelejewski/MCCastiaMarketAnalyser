@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopInfo;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopInfoFoundListener;
 
 public class ShopListExporter implements IShopInfoFoundListener {

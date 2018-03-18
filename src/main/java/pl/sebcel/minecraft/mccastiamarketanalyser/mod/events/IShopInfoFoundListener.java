@@ -1,6 +1,6 @@
 package pl.sebcel.minecraft.mccastiamarketanalyser.mod.events;
 
-import pl.sebcel.minecraft.mccastiamarketanalyser.mod.ShopInfo;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopInfo;
 
 public interface IShopInfoFoundListener {
     

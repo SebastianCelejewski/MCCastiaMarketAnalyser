@@ -8,6 +8,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.AnalyseMarketCommand;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.LoadDataCommand;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.SaveDataCommand;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.MarketData;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IAnalyseMarketCommandListener;
 
 @Mod(modid = CastiaMarketAnalyserMod.MODID, name = CastiaMarketAnalyserMod.NAME, version = CastiaMarketAnalyserMod.VERSION)
@@ -22,8 +26,11 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
     private RawSignTextLogger rawSignTextLogger;
     private MarketDataAnalyser marketDataAnalyser;
     private ShopListExporter shopListExporter;
-    private AnalyseMarketCommand analyseMarketCommand;
     private MarketDataExporter marketDataExporter;
+    
+    private AnalyseMarketCommand analyseMarketCommand;
+    private LoadDataCommand loadDataCommand;
+    private SaveDataCommand saveDataCommand;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -38,11 +45,19 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
         rawSignTextLogger = new RawSignTextLogger();
         marketDataAnalyser = new MarketDataAnalyser();
         shopListExporter = new ShopListExporter();
-        analyseMarketCommand = new AnalyseMarketCommand();
         marketDataExporter = new MarketDataExporter();
 
+        analyseMarketCommand = new AnalyseMarketCommand();
+        loadDataCommand = new LoadDataCommand();
+        saveDataCommand = new SaveDataCommand();
+
         rawSignTextLogger.initialize();
-        marketDataAnalyser.initialize();
+        
+        loadDataCommand.addCommandListener(marketDataAnalyser);
+        loadDataCommand.addCommandListener(marketDataExporter);
+        
+        saveDataCommand.addCommandListener(marketDataAnalyser);
+        saveDataCommand.addCommandListener(marketDataExporter);
 
 //        playerMoveHandler.addSignFoundListener(rawSignTextLogger);
         playerMoveHandler.addSignFoundListener(signAnalyser);
@@ -54,6 +69,8 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
 
         MinecraftForge.EVENT_BUS.register(playerMoveHandler);
         ClientCommandHandler.instance.registerCommand(analyseMarketCommand);
+        ClientCommandHandler.instance.registerCommand(loadDataCommand);
+        ClientCommandHandler.instance.registerCommand(saveDataCommand);
     }
 
     @Override

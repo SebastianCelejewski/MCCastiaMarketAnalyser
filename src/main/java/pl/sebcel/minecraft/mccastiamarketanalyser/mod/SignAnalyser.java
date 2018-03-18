@@ -5,6 +5,8 @@ import java.util.Set;
 
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.text.ITextComponent;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopInfo;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopOffer;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopInfoFoundListener;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopOfferFoundListener;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ISignFoundListener;

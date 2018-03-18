@@ -15,9 +15,15 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.command.ICommandSender;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.MarketData;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopOffer;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ILoadDataCommandListener;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ISaveDataCommandListener;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopOfferFoundListener;
 
-public class MarketDataAnalyser implements IShopOfferFoundListener {
+public class MarketDataAnalyser implements IShopOfferFoundListener, ILoadDataCommandListener, ISaveDataCommandListener {
 
     private final static String PRODUCT_NAMES_FILE_NAME = "market" + File.separator + "products.dta";
     private final static String OFFERS_FILE_NAME = "market" + File.separator + "offers.dta";
@@ -29,10 +35,6 @@ public class MarketDataAnalyser implements IShopOfferFoundListener {
     private Predicate<? super ShopOffer> isSellOffer = x -> x.getItemSellPrice() != null;
     private Comparator<? super ShopOffer> buyPriceAscending = (o1, o2) -> o1.getItemBuyPrice().compareTo(o2.getItemBuyPrice());
     private Comparator<? super ShopOffer> sellPriceDescending = (o1, o2) -> -o1.getItemSellPrice().compareTo(o2.getItemSellPrice());
-
-    public void initialize() {
-        loadData();
-    }
 
     @Override
     public void onShopOfferFound(ShopOffer shopOffer) {
@@ -64,12 +66,33 @@ public class MarketDataAnalyser implements IShopOfferFoundListener {
             result.add(new MarketData(productName, buyOffers, sellOffers, tradeOpportunity));
         }
 
-        saveData();
-
         return result;
     }
 
-    private void loadData() {
+    @Override
+    public void onDataSaveRequested(ICommandSender sender) {
+        try {
+            File productNamesFile = new File(PRODUCT_NAMES_FILE_NAME);
+            productNamesFile.getParentFile().mkdirs();
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(productNamesFile));
+            out.writeObject(productNames);
+            out.close();
+
+            File offersFile = new File(OFFERS_FILE_NAME);
+            offersFile.getParentFile().mkdirs();
+            out = new ObjectOutputStream(new FileOutputStream(offersFile));
+            out.writeObject(offers);
+            out.close();
+
+            System.out.println("Successfully saved " + productNames.size() + " product names and " + offers.values().size() + " offers");
+        } catch (Exception ex) {
+            System.err.println("Failed to save market data: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDataLoadRequested(ICommandSender sender) {
         try {
             File productNamesFile = new File(PRODUCT_NAMES_FILE_NAME);
             File offersFile = new File(OFFERS_FILE_NAME);
@@ -90,27 +113,6 @@ public class MarketDataAnalyser implements IShopOfferFoundListener {
 
         } catch (Exception ex) {
             System.err.println("Failed to load market data: " + ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
-
-    private void saveData() {
-        try {
-            File productNamesFile = new File(PRODUCT_NAMES_FILE_NAME);
-            productNamesFile.getParentFile().mkdirs();
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(productNamesFile));
-            out.writeObject(productNames);
-            out.close();
-
-            File offersFile = new File(OFFERS_FILE_NAME);
-            offersFile.getParentFile().mkdirs();
-            out = new ObjectOutputStream(new FileOutputStream(offersFile));
-            out.writeObject(offers);
-            out.close();
-
-            System.out.println("Successfully saved " + productNames.size() + " product names and " + offers.values().size() + " offers");
-        } catch (Exception ex) {
-            System.err.println("Failed to save market data: " + ex.getMessage());
             ex.printStackTrace();
         }
     }

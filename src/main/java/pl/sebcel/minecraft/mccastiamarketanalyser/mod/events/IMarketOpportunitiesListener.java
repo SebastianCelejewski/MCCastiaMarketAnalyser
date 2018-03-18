@@ -3,7 +3,7 @@ package pl.sebcel.minecraft.mccastiamarketanalyser.mod.events;
 import java.util.List;
 import java.util.Map;
 
-import pl.sebcel.minecraft.mccastiamarketanalyser.mod.ShopOffer;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopOffer;
 
 public interface IMarketOpportunitiesListener {
 

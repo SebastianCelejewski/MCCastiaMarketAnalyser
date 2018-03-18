@@ -1,5 +1,6 @@
 import spock.lang.*
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.*
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.*
 
 class SignAnalyserSpec extends Specification {
 
