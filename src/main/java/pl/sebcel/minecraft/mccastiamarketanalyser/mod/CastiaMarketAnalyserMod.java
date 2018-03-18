@@ -13,6 +13,9 @@ import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.LoadDataCommand;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.SaveDataCommand;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.MarketData;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IAnalyseMarketCommandListener;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.export.MarketDataExporter;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.export.RawSignTextExporter;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.export.ShopListExporter;
 
 @Mod(modid = CastiaMarketAnalyserMod.MODID, name = CastiaMarketAnalyserMod.NAME, version = CastiaMarketAnalyserMod.VERSION)
 public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
@@ -25,7 +28,7 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
 
     private PlayerMoveHandler playerMoveHandler;
     private SignAnalyser signAnalyser;
-    private RawSignTextLogger rawSignTextLogger;
+    private RawSignTextExporter rawSignTextLogger;
     private MarketDataAnalyser marketDataAnalyser;
     private ShopListExporter shopListExporter;
     private MarketDataExporter marketDataExporter;
@@ -44,7 +47,7 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
         System.out.println("FMLInitializationEvent");
         playerMoveHandler = new PlayerMoveHandler();
         signAnalyser = new SignAnalyser();
-        rawSignTextLogger = new RawSignTextLogger();
+        rawSignTextLogger = new RawSignTextExporter();
         marketDataAnalyser = new MarketDataAnalyser();
         shopListExporter = new ShopListExporter();
         marketDataExporter = new MarketDataExporter();

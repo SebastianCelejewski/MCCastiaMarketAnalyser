@@ -1,4 +1,4 @@
-package pl.sebcel.minecraft.mccastiamarketanalyser.mod;
+package pl.sebcel.minecraft.mccastiamarketanalyser.mod.export;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.command.ICommandSender;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.CastiaMarketAnalyserMod;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.MarketData;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopInfo;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopOffer;

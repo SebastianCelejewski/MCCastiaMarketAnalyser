@@ -1,4 +1,4 @@
-package pl.sebcel.minecraft.mccastiamarketanalyser.mod;
+package pl.sebcel.minecraft.mccastiamarketanalyser.mod.export;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import net.minecraft.tileentity.TileEntitySign;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ISignFoundListener;
 
-public class RawSignTextLogger implements ISignFoundListener {
+public class RawSignTextExporter implements ISignFoundListener {
 
     private String outputDirectoryName = "signs";
     private String outputFileName = "signs.txt";
