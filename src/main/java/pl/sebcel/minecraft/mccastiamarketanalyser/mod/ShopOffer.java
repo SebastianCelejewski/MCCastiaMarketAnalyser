@@ -1,7 +1,11 @@
 package pl.sebcel.minecraft.mccastiamarketanalyser.mod;
 
-public class ShopOffer {
+import java.io.Serializable;
 
+public class ShopOffer implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    
     private String ownerName;
     private String productName;
     private String rawOfferString;

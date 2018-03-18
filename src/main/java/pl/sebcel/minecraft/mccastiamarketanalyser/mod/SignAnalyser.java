@@ -12,6 +12,7 @@ import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ISignFoundListener;
 public class SignAnalyser implements ISignFoundListener {
 
     private Set<IShopOfferFoundListener> shopOfferFoundListeners = new HashSet<>();
+    
     private Set<IShopInfoFoundListener> shopInfoFoundListeners = new HashSet<>();
 
     public void addShopOfferFoundListener(IShopOfferFoundListener shopOfferFoundListener) {
