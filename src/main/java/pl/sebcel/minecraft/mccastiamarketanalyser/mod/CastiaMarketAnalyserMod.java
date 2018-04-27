@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.AnalyseMarketCommand;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.LoadDataCommand;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.SaveDataCommand;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.commands.VisitMarketCommand;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.MarketData;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IAnalyseMarketCommandListener;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.export.MarketDataExporter;
@@ -31,10 +32,12 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
     private MarketDataAnalyser marketDataAnalyser = new MarketDataAnalyser();
     private ShopListExporter shopListExporter = new ShopListExporter();
     private MarketDataExporter marketDataExporter = new MarketDataExporter();
+    private MarketVisitor marketVisitor = new MarketVisitor();
 
     private AnalyseMarketCommand analyseMarketCommand = new AnalyseMarketCommand();
     private LoadDataCommand loadDataCommand = new LoadDataCommand();
     private SaveDataCommand saveDataCommand = new SaveDataCommand();
+    private VisitMarketCommand visitMarketCommand = new VisitMarketCommand();
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
@@ -52,11 +55,13 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
         signAnalyser.addShopInfoFoundListener(shopListExporter);
         analyseMarketCommand.addCommandListener(this);
         signAnalyser.addShopInfoFoundListener(marketDataExporter);
+        visitMarketCommand.addCommandListener(marketVisitor);
 
         MinecraftForge.EVENT_BUS.register(playerMoveHandler);
         ClientCommandHandler.instance.registerCommand(analyseMarketCommand);
         ClientCommandHandler.instance.registerCommand(loadDataCommand);
         ClientCommandHandler.instance.registerCommand(saveDataCommand);
+        ClientCommandHandler.instance.registerCommand(visitMarketCommand);
     }
 
     @Override

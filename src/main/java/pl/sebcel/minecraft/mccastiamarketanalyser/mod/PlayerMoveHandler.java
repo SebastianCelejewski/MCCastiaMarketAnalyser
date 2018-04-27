@@ -16,7 +16,8 @@ import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ISignFoundListener;
 
 public class PlayerMoveHandler {
 
-    private final static int SIGN_READING_RANGE_IN_BLOCKS = 5;
+    private final static int HORIZONTAL_SIGN_READING_RANGE_IN_BLOCKS = 15;
+    private final static int VERTICAL_SIGN_READING_RANGE_IN_BLOCKS = 5;
 
     private Set<ISignFoundListener> signFoundListeners = new HashSet<>();
 
@@ -47,9 +48,9 @@ public class PlayerMoveHandler {
 
     private void readSigns(Entity player) {
         BlockPos playerPosition = player.getPosition();
-        for (int x = playerPosition.getX() - SIGN_READING_RANGE_IN_BLOCKS; x <= playerPosition.getX() + SIGN_READING_RANGE_IN_BLOCKS; x++) {
-            for (int y = playerPosition.getY() - SIGN_READING_RANGE_IN_BLOCKS; y <= playerPosition.getY() + SIGN_READING_RANGE_IN_BLOCKS; y++) {
-                for (int z = playerPosition.getZ() - SIGN_READING_RANGE_IN_BLOCKS; z <= playerPosition.getZ() + SIGN_READING_RANGE_IN_BLOCKS; z++) {
+        for (int x = playerPosition.getX() - HORIZONTAL_SIGN_READING_RANGE_IN_BLOCKS; x <= playerPosition.getX() + HORIZONTAL_SIGN_READING_RANGE_IN_BLOCKS; x++) {
+            for (int y = playerPosition.getY(); y <= playerPosition.getY() + VERTICAL_SIGN_READING_RANGE_IN_BLOCKS; y++) {
+                for (int z = playerPosition.getZ() - HORIZONTAL_SIGN_READING_RANGE_IN_BLOCKS; z <= playerPosition.getZ() + HORIZONTAL_SIGN_READING_RANGE_IN_BLOCKS; z++) {
                     TileEntity tileEntity = player.getEntityWorld().getTileEntity(new BlockPos(x, y, z));
                     if (tileEntity instanceof TileEntitySign) {
                         for (ISignFoundListener listener : signFoundListeners) {
