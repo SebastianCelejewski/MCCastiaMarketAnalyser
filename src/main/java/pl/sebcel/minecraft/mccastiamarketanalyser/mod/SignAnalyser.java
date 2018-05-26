@@ -1,10 +1,13 @@
 package pl.sebcel.minecraft.mccastiamarketanalyser.mod;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.text.ITextComponent;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ChestInfo;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopInfo;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopOffer;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.IShopInfoFoundListener;
@@ -16,6 +19,8 @@ public class SignAnalyser implements ISignFoundListener {
     private Set<IShopOfferFoundListener> shopOfferFoundListeners = new HashSet<>();
     
     private Set<IShopInfoFoundListener> shopInfoFoundListeners = new HashSet<>();
+    
+    private ChestAnalyser chestAnalyser;
 
     public void addShopOfferFoundListener(IShopOfferFoundListener shopOfferFoundListener) {
         this.shopOfferFoundListeners.add(shopOfferFoundListener);
@@ -24,10 +29,15 @@ public class SignAnalyser implements ISignFoundListener {
     public void addShopInfoFoundListener(IShopInfoFoundListener shopInfoFoundListener) {
         this.shopInfoFoundListeners.add(shopInfoFoundListener);
     }
+    
+    public void setChestAnalyser(ChestAnalyser chestAnalyser) {
+        this.chestAnalyser = chestAnalyser;
+    }
 
     public void onSignFound(TileEntitySign sign) {
         // TODO: Lines below could be turned into a fancy lambda
         ITextComponent[] signText = ((TileEntitySign) sign).signText;
+        System.out.println("-------------------------------------------------------");
         String[] lines = new String[signText.length];
         for (int i = 0; i < signText.length; i++) {
             lines[i] = signText[i].getUnformattedText();
@@ -35,9 +45,12 @@ public class SignAnalyser implements ISignFoundListener {
 
         try {
             ShopOffer shopOffer = parseShopOffer(lines);
+            ChestInfo chestInfo = chestAnalyser.getChestInfo(sign);
+            System.out.println("Sign: " + Arrays.stream(lines).collect(Collectors.joining(" ")));
+            System.out.println(chestInfo);
             if (shopOffer != null) {
                 for (IShopOfferFoundListener listener : shopOfferFoundListeners) {
-                    listener.onShopOfferFound(shopOffer);
+                    listener.onShopOfferFound(shopOffer, chestInfo);
                 }
             }
 
@@ -50,6 +63,7 @@ public class SignAnalyser implements ISignFoundListener {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        System.out.println("======================================================");
     }
 
     public ShopOffer parseShopOffer(String[] lines) {

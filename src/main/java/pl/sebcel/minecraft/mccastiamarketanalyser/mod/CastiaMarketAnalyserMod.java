@@ -28,6 +28,7 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
 
     private PlayerMoveHandler playerMoveHandler = new PlayerMoveHandler();
     private SignAnalyser signAnalyser = new SignAnalyser();
+    private ChestAnalyser chestAnalyser = new ChestAnalyser();
     private RawSignTextExporter rawSignTextLogger = new RawSignTextExporter();
     private MarketDataAnalyser marketDataAnalyser = new MarketDataAnalyser();
     private ShopListExporter shopListExporter = new ShopListExporter();
@@ -45,6 +46,7 @@ public class CastiaMarketAnalyserMod implements IAnalyseMarketCommandListener {
 
         rawSignTextLogger.initialize();
 
+        signAnalyser.setChestAnalyser(chestAnalyser);
         loadDataCommand.addCommandListener(marketDataAnalyser);
         loadDataCommand.addCommandListener(marketDataExporter);
         saveDataCommand.addCommandListener(marketDataAnalyser);

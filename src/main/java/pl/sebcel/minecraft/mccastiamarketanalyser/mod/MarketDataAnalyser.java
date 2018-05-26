@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.minecraft.command.ICommandSender;
+import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ChestInfo;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.MarketData;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.domain.ShopOffer;
 import pl.sebcel.minecraft.mccastiamarketanalyser.mod.events.ILoadDataCommandListener;
@@ -36,7 +37,7 @@ public class MarketDataAnalyser implements IShopOfferFoundListener, ILoadDataCom
     private Comparator<? super ShopOffer> sellPriceDescending = (o1, o2) -> -o1.getItemSellPrice().compareTo(o2.getItemSellPrice());
 
     @Override
-    public void onShopOfferFound(ShopOffer shopOffer) {
+    public void onShopOfferFound(ShopOffer shopOffer, ChestInfo chestInfo) {
         String productName = shopOffer.getProductName();
         String ownerName = shopOffer.getOwnerName();
         productNames.add(productName);
